@@ -1,0 +1,116 @@
+<html>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<body>
+  <br>
+  <div class="container">
+      
+  <div class="jumbotron">
+    <h1 class="display-4">Experiment</h1>
+    <p class="lead">As soon as you count the number of balls, hit the corresponding number on your keyboard (between 1 and 9)</p>
+    <br>
+    <div class="text-center">
+        <svg width='800' height='400' style="background:white;">
+            <circle r='10' cx='400' cy='200' fill='steelblue'/>
+            <circle r='10' cx='200' cy='100' fill='steelblue'/>
+            <circle r='10' cx='700' cy='300' fill='steelblue'/>
+        </svg>
+        <br/>
+        <br/>
+    <p class="lead">
+        <div id="feedback">
+</div>
+      <a class="btn btn-primary btn-lg" href="results.html" role="button">Results!</a>
+    </p>
+    </div>
+  </div>
+
+  </div>
+
+
+<!-- Sucess Feedback  -->
+<div style="display:none" id="success">
+<div class="alert alert-success" style="display:inline-block;">
+  <strong>Success!</strong>
+</div>
+</div>
+
+</body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+var d = new Date();
+var time_starting = d.getTime();
+
+window.onkeydown = function(e) {
+   var key = e.keyCode ? e.keyCode : e.which;
+   var number = key-48;
+   console.log(number)
+    if(number === d3.select('svg').selectAll('circle').size()){
+        var d2 = new Date();
+        var time_finishing = d2.getTime();
+        var time_differennce = time_finishing - time_starting
+        if(time_differennce < 10000){
+            console.log('Time: '+(time_differennce))
+            saveToFirebase(d3.select('svg').selectAll('circle').size(),time_differennce);
+        }
+        var d33 = new Date();
+        time_starting = d33.getTime();
+        var firstDivContent = document.getElementById('success');
+        var secondDivContent = document.getElementById('feedback');
+        console.log(firstDivContent.childNodes[1].childNodes[1].innerHTML ='Success! '+time_differennce+'ms')
+        secondDivContent.innerHTML += firstDivContent.innerHTML;
+
+        d3.select('svg').selectAll('circle').remove();
+        console.log('Change Circles!');
+        var number_of_balls = 1+Math.floor(10*Math.random());
+        if (number_of_balls > 9){
+            number_of_balls = 5;
+        }
+        console.log(number_of_balls)
+        d3.select('svg')
+            .selectAll('circle')
+            .data([...Array(number_of_balls)])
+            .enter()
+            .append('circle')
+            .attr('r',10)
+            .attr('cx',d=>Math.random()*800)
+            .attr('cy',d=>Math.random()*400)
+            .attr('fill','steelblue')
+    }
+}
+</script>
+
+
+<script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyDmGjBjorPAoMhIWwmj2EH47zzD0mQdktg",
+    authDomain: "bubble-count-310fd.firebaseapp.com",
+    databaseURL: "https://bubble-count-310fd.firebaseio.com",
+    projectId: "bubble-count-310fd",
+    storageBucket: "bubble-count-310fd.appspot.com",
+    messagingSenderId: "1015789219674"
+  };
+  firebase.initializeApp(config);
+
+function saveToFirebase(nb,time) {
+    var objectToSend = {
+        numberOfBubbles: nb,
+        timeSpent: time
+    };
+
+    firebase.database().ref('bubble-entries').push().set(objectToSend)
+        .then(function(snapshot) {
+            console.log('SENT')
+        }, function(error) {
+            console.log('error' + error);
+            // error(); // some error method
+        });
+}
+
+</script>
+
+  </html>
