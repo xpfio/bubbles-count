@@ -42,6 +42,7 @@
 <script>
 var d = new Date();
 var time_starting = d.getTime();
+var ID_SESSION = Math.floor(1000000*Math.random());
 
 window.onkeydown = function(e) {
    var key = e.keyCode ? e.keyCode : e.which;
@@ -99,7 +100,8 @@ window.onkeydown = function(e) {
 function saveToFirebase(nb,time) {
     var objectToSend = {
         numberOfBubbles: nb,
-        timeSpent: time
+        timeSpent: time,
+        id:ID_SESSION
     };
 
     firebase.database().ref('bubble-entries').push().set(objectToSend)
