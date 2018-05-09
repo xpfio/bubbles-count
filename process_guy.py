@@ -3,7 +3,7 @@ from pprint import pprint
 import seaborn as sns
 import pandas as pd
 
-with open('bubble-count-310fd-bubble-entries-export (4).json') as json_data:
+with open('bubble-count-310fd-bubble-entries-export (1).json') as json_data:
     d = json.loads(json_data.read())
     json_data.close()
     # pprint(d)
@@ -32,7 +32,8 @@ with open('bubble-count-310fd-bubble-entries-export (4).json') as json_data:
     # df = pandas.DataFrame(data=data)
 
     df = pd.DataFrame(data=d).transpose()
-    # print(df)
+    df = df[df['id'] == 882194  ]
+    print(df)
     # ax = sns.violinplot(x="numberOfBubbles", y="timeSpent", data=df)
     ax2 = sns.boxplot(x="numberOfBubbles", y="timeSpent", data=df)
     ax2.get_figure().savefig("output1.png")
